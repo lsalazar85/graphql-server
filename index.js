@@ -1,3 +1,5 @@
+import {ApolloServer, gql} from 'apollo-server'
+
 const persons = [
     {
         name: 'Luis',
@@ -15,9 +17,41 @@ const persons = [
     },
     {
         name: 'Rosa',
-        phone: '4321995',
         street: 'Eleodoro Lobos 285',
         city: 'Buenos Aires',
         id: '3d94650'
     }
 ]
+
+// Describe all data
+const typeDefs = gql`
+    type Person {
+        name: String!
+        phone: String
+        street: String!
+        city: String!
+        id: String!
+    }
+    
+    type Query {
+        personCount: Int!
+        allPersons: [Person]!
+    }
+`
+
+const resolvers = {
+    Query: {
+        personCount: () => persons.length,
+        allPersons: () => persons
+    }
+}
+
+const server = new ApolloServer({
+    typeDefs,
+    resolvers
+})
+
+
+server.listen().then(({ url}) => {
+    console.log(`Start server ${url}`)
+})
